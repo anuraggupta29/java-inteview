@@ -1,0 +1,92 @@
+
+1. Access Modifiers
+
+| Keyword     | Usage                                    | Interview Notes                                                                                               |
+| ----------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `public`    | Accessible everywhere.                   | The most open visibility.                                                                                     |
+| `protected` | Accessible in same package + subclasses. | Common question: difference with default/package-private.                                                     |
+| `private`   | Accessible only in same class.           | Often asked about encapsulation.                                                                              |
+| *(default)* | No keyword → package-private.            | Not accessible outside package unless subclass (but default still won’t work in subclass if outside package). |
+
+
+
+
+2. Class & Object Related
+
+| Keyword      | Usage                                                                                      | Interview Notes                                   |
+| ------------ | ------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| `class`      | Defines a class.                                                                           | Only one public class per file.                   |
+| `abstract`   | Class/method with no full implementation.                                                  | Abstract class can have non-abstract methods too. |
+| `final`      | Variable: value can’t change.<br>Method: can’t be overridden.<br>Class: can’t be extended. | Final != immutable.                               |
+| `extends`    | Inherit from a class.                                                                      | Single inheritance in Java.                       |
+| `implements` | Implement interface(s).                                                                    | Multiple interfaces allowed.                      |
+| `interface`  | Contract of methods.                                                                       | Since Java 8: default & static methods allowed.   |
+| `enum`       | Special class for constants.                                                               | Can have fields & methods.                        |
+
+
+
+3. Method Related
+
+
+| Keyword        | Usage                                          | Interview Notes                                       |
+| -------------- | ---------------------------------------------- | ----------------------------------------------------- |
+| `void`         | No return value.                               | Interview Q: Difference `void` vs return type.        |
+| `return`       | Exit method & optionally give value.           | Return inside loops.                                  |
+| `static`       | Belongs to class, not instance.                | Static methods can’t use non-static members directly. |
+| `synchronized` | Thread-safety on methods/blocks.               | Asked in concurrency interviews.                      |
+| `native`       | Method implemented in non-Java language.       | Rare but might be asked for JNI.                      |
+| `default`      | Default implementation in interface (Java 8+). | Different from default/package-private access.        |
+
+
+
+4. Variable Related
+
+
+| Keyword     | Usage                                             | Interview Notes                              |
+| ----------- | ------------------------------------------------- | -------------------------------------------- |
+| `this`      | Reference to current object.                      | `this()` calls another constructor.          |
+| `super`     | Reference to parent class.                        | `super()` must be first line in constructor. |
+| `volatile`  | Variable is read from main memory, not CPU cache. | Commonly asked in multithreading.            |
+| `transient` | Skip field during serialization.                  | Asked in serialization questions.            |
+| `final`     | Constant reference/value.                         | Different rules for primitives vs objects.   |
+
+
+
+5. Control Flow
+
+| Keyword                   | Usage                                         | Interview Notes                                     |
+| ------------------------- | --------------------------------------------- | --------------------------------------------------- |
+| `if`, `else`              | Conditional branching.                        | Short-circuit behavior in conditions.               |
+| `switch`                  | Multi-way branch.                             | Since Java 14: enhanced switch expressions.         |
+| `case`, `default`         | Inside switch.                                | `break` often forgotten by beginners.               |
+| `for`, `while`, `do`      | Loops.                                        | `do` runs at least once.                            |
+| `break`                   | Exit loop/switch.                             | `break` with label for nested loops.                |
+| `continue`                | Skip current iteration.                       | Label can be used.                                  |
+| `try`, `catch`, `finally` | Exception handling.                           | `finally` always runs (except System.exit).         |
+| `throw`, `throws`         | Throw exception / declare possible exception. | Checked vs unchecked exceptions question is common. |
+
+
+
+
+6. Special Purpose
+
+| Keyword      | Usage                    | Interview Notes                                           |
+| ------------ | ------------------------ | --------------------------------------------------------- |
+| `package`    | Defines package.         | Must be first non-comment line in file.                   |
+| `import`     | Import classes/packages. | `import static` for static members.                       |
+| `new`        | Create object.           | Can't be used with abstract/interface directly.           |
+| `instanceof` | Test object type.        | Null always returns false.                                |
+| `assert`     | Debug condition checks.  | Disabled by default at runtime unless enabled with `-ea`. |
+
+
+
+7. Thread & Concurrency
+
+| Keyword                                             | Usage                                 | Interview Notes                                       |
+| --------------------------------------------------- | ------------------------------------- | ----------------------------------------------------- |
+| `synchronized`                                      | Method/block lock.                    | Lock object: `this` or custom lock.                   |
+| `volatile`                                          | Visibility guarantee between threads. | Doesn’t guarantee atomicity.                          |
+| `wait`, `notify`, `notifyAll` *(from Object class)* | Inter-thread communication.           | Not keywords but important in concurrency interviews. |
+
+
+

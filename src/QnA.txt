@@ -1,0 +1,279 @@
+Q. difference between default and protected?
+A. protected is accessible in same package and also in subclasses outside of package.
+Default is only accessible inside the package.
+
+
+Q. what is native keyword in java?
+A. It marks a method which is not written in Java.
+It is usually written in C/CPP, stored in a native library (.dll file on windows)
+implemented outside JVM using the Java native interface
+You load the native library using System.loadLibrary() or System.load().
+
+
+Q. what methods and variables interface allows?
+Ans. only default/static methods
+default -> those methods have some default implementation
+static -> belonging to a class rather than objects
+only public static final variables allowed => belong to class and value cannot change
+
+
+Q. what does this() do in java?
+A. It calls another constructor for the object
+this() -> will call constructor with no parameters
+this(name, age) => will call constructor with 2 parameters
+
+
+Q. What does volatile keyword do?
+A. It tells the JVM to always read the value from main memory, not from Thread's local cache.
+Note: due to this all threads see the same data (visibility is maintained)
+but, it does not solve atomicity
+(If multiple threads are updating it at same time, value may become invalid as there is no locking)
+
+
+Q. What is the difference when final is used with primitive and object variables?
+A. Primitive (value cannot be modified)
+final int a = 10;
+a = 20; //  not allowed (compile error)
+
+Object (reference cannot be modified but values inside can change)
+final Person p = new Person("Anurag");
+p = new Person("hement"); // not allowed (reference cannot be modified)
+
+p.name = "hement"  // allowed (values inside can change)
+
+
+Q. what does transient keyword do?
+A. If a class implements serializable
+i.e it can be serialized (convered to bytes) and written to disk and deserialized
+
+and there are some fields in the class which we dont want serialized,
+then we mark them as transient so those fields will be ignored.
+
+Required to avoid serializing large/unnecessary/sensitive objects.
+
+
+Q. Checked vs Unchecked exceptions?
+A. Checked exceptions:
+they extend the Exception class
+and are checked at compile time, you must handle them (try/catch or throws keyword at method)
+Used for external factors: I/O, DB connection, Network
+they are used for recoverable conditions, eg. if sql is invalid indicate user to correct the sql
+
+Eg, IOException, SQLException
+
+Unchecked Exceptions:
+they extend the RuntimeException class
+they are checked at runtime, its not required to handle them.
+(these exceptions happen due to bugs, so compiler assumes you will fix the bug rather than handling using try/catch)
+
+Example: NullPointerException, ArithmeticException, ArrayIndexOutOfBoundsException
+
+
+
+Q. Exception vs Error?
+A. Exception: happens due to programming logic or external factors (explained in prev question)
+
+Error: Serious problems that happen in JVM/Environment.
+You cannot recover from them, and they cannot be handled.
+
+Eg, OutOfMemoryError, StackOverflowError, VirtualMachineError
+
+java.lang.Object
+   ↳ java.lang.Throwable   (java.lang)
+        ↳ java.lang.Exception   (java.lang)
+        |      ↳ java.lang.RuntimeException   (java.lang)
+        |             ↳ ArithmeticException, NullPointerException, etc.
+        |
+        ↳ java.lang.Error   (java.lang)
+               ↳ OutOfMemoryError, StackOverflowError, etc.
+
+
+Q. What is use of finally in error handling?
+A. The finally block is always executed, regardless of whether an exception was thrown or not
+(except in extreme cases like System.exit(0) or JVM crash, or errors like OutOfMemoryError, StackOverflowError).
+It’s mainly used for cleanup code (closing files, releasing DB connections, freeing resources).
+It executes even if there is return statement in try and catch block!
+
+
+
+Q. What is try-with-resources?
+In this you can mention the resources in try block as parameters,
+and these resources are closed automatically even if there is an exception.
+So finally block is not required to close these resources.
+Note: those resources must implement Closeable interface, so Java knows how to close them.
+
+try(
+    CustomFileReader cos = new CustomFileReader();  // this will be closed automatically as it implements Closeable
+    // can add multiple resources
+){.....
+
+
+
+
+Q. what does instanceof do?
+A. it returns true if the object is of the same class, otherwise false.
+if object is null, then it also returns false;
+
+Eg.
+Object a = "Anurag";
+if(a instanceof String) System.out.println("Is string");
+if(a instanceof Object) System.out.println("Is Object");
+
+both will be printed as its a string, and string extends object (so its instance of both)
+
+
+Q. what does .getClass() do?
+A. It return the class of the object it has additional methods to get name in different forms.
+
+getClass()
+Defined in java.lang.Object.
+Returns the runtime class of the actual object, not the type of the reference variable.
+Always exact — it does not care about inheritance.
+getClass() on null will give NullPointerException!!!!
+
+eg.
+Object a = "aaaa";
+sout(a.getClass());  // output : class String
+sout(a.getClass().getSimpleName());  // output : String
+
+
+Q. what is difference between instanceof and getClass() ?
+
+A. instanceof will return true for parentclass as well,
+getClass() will only give the class of runtime Object
+
+Eg.
+if ("aaa" instanceof Object)   // true
+if("aaa".getClass() == Object.class)   // false
+
+
+
+
+Q. Basic OOPs
+Ans.
+| Principle         | What it means                                  | How it’s achieved in Java                                                                            | Example keywords / usage           |
+| ----------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **Encapsulation** | Bundle data + methods, restrict direct access  | - Make fields `private` <br> - Provide `public` getters/setters                                      | `private`, `public`                |
+| **Inheritance**   | Reuse code, create IS-A relationship           | - `extends` for classes <br> - `implements` for interfaces                                           | `extends`, `implements`            |
+| **Polymorphism**  | One interface, many implementations            | - **Compile-time**: Method Overloading <br> - **Runtime**: Method Overriding (with dynamic dispatch) | `@Override`, same method signature |
+| **Abstraction**   | Show *what* an object does, hide *how* it does | - `abstract` classes (with abstract methods) <br> - `interface` (pure abstraction)                   | `abstract`, `interface`            |
+
+
+
+Q. What is Composition (Strong Has-A relationship) ?
+Definition: A class is made up of other classes as part of its internal state.
+If the container object is destroyed, the contained objects are also destroyed.
+Strong lifecycle dependency (i.e., “whole-part relationship”).
+
+It is represented as :
+Car ◆----------- Engine
+
+Eg.
+class Car {
+    Engine engine;
+    Car() {
+        engine = new Engine();
+    }
+}
+
+=> Car holds engine object, and when car is created, engine object is created
+and when car is destroyed, engine object is also destroyed.
+
+
+
+Q. What is aggregation (Weak has a relationship) ?
+Definition: A special form of association where one object contains another,
+but the contained object can exist independently of the container.
+It is Looser than composition.
+
+It is represented as :
+Car ◇----------- Engine
+
+Eg.
+class Car {
+    Engine engine;
+    Car(Engine engine) {
+        this.engine = engine;
+    }
+}
+
+Engine engine = new Engine();
+Car car = new Car(engine);
+
+=> Car holds engine object, but creation and destruction of engine object does not depend on Car object.
+
+
+
+Q. What is Association (general relationship) ?
+Definition: A loose relationship between two classes.
+No ownership implied — just a connection.
+Can be one-to-one, one-to-many, many-to-many.
+Both objects can exist independently.
+
+
+It is represented as :
+Car -----------> Engine   (Car uses Engine)
+
+Eg.
+Class Car {
+    void start(Engine engine){
+        // do operations
+    }
+}
+
+=> Car does not hold object, but merely uses it, both can exist without each other.
+
+
+
+Q. UML symbol for different relationship types:
+
+| Source  | UML Symbol  | Target | Description                             |
+| ------- | ----------- | ------ | --------------------------------------- |
+| Vehicle | ◁- - - - -  | Car    | Car implements Vehicle                  |
+| Car     | ◁---------  | BmwCar | BmwCar extends Car                      |
+| Car     | ◆---------  | Engine | Car (strong) has-a Engine : Composition |
+| Car     | ◇---------  | Engine | Car (weak) has-a Engine : Aggregation   |
+| Car     | --------->  | Engine | Car uses Engine : Association           |
+
+
+
+
+Q. What are Inner classes?
+A. refer package InnerAndAnonymousClass for details.
+
+Non-static inner class:
+It needs object of outer class to create object of inner class.
+Car.Engine engine = (new Car()).new Engine();
+
+static inner class:
+It does not need object of Outer class, and can only access static members of outer class
+Bike.Engine bikeEngine = new Bike.Engine();
+
+Local Inner class:
+The class is defined under a method of another class
+
+Anonymous class:
+allows to give implementation to abstract classes/interfaces on the fly.
+
+
+
+
+Q. What are final classes?
+A. those classes which cannot be extended.
+Eg.
+final class Car {}
+
+
+
+
+Q. What are sealed classes?
+A. refer SealedAndFinalClass package
+sealed class cannot be extended by classes which are not permitted
+Eg. sealed class Vehicle permits Car,Bike,Boat {}
+
+sealed class cannot be extended by classes which are not permitted
+Extending classes must declare themselves as sealed, non-sealed or final.
+
+non-sealed classes can be extended by any class.
+sealed classes which are extending from another sealed class do not need to specify permits
+
