@@ -277,3 +277,23 @@ Extending classes must declare themselves as sealed, non-sealed or final.
 non-sealed classes can be extended by any class.
 sealed classes which are extending from another sealed class do not need to specify permits
 
+
+
+Q. Use of boolean equals(Object obj) and int hashCode() methods?
+A. equals()
+checks equality between 2 objects of CharFrequency => how the 2 objects should be equated.
+by default is compares based on object reference (address)
+
+hashCode()
+generates hash value to be used in hash based collections like HashSet, MashMap, HashTable
+by default it generates hashCode based on object reference (address)
+
+
+
+Q. Difference between equals() and Comparable->compareTo() ?
+A. equals() defines logical equality between two objects.
+used in collections like HashMap, HashSet to find duplicates
+
+Comparable is used to define ordering of two objects, which will come first in an order.
+used in comparison based algorithms like Collections.sort(), priorityQueue operations, TreeSet, TreeMap
+

@@ -1,6 +1,6 @@
 package KeywordsUsage;
 
-public class KewordRunner {
+public class KeywordRunner {
     public static void main(String[] args){
         CarTypeEnum car = CarTypeEnum.BMW;
         System.out.println(car + " " + CarTypeEnum.Mercedes.ordinal());

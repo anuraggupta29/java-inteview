@@ -1,0 +1,489 @@
+TOPIC 1 : THREAD BASICS
+
+Q. What is Thread. How do you create it?
+Answer.
+A thread is the smallest unit of execution in a program.
+In Java, threads are managed by the JVM and scheduled by the OS.
+
+Thread Lifecycle
+NEW → Thread created but not started
+RUNNABLE → Ready to run (waiting for CPU)
+RUNNING → Currently executing
+BLOCKED/WAITING/TIMED_WAITING → Waiting for resource/lock
+TERMINATED → Finished execution
+
+Creating Threads
+
+Two main ways:
+
+// 1. Extending Thread
+class MyThread extends Thread {
+    public void run() {
+        System.out.println("Thread running");
+    }
+}
+new MyThread().start();   // start() creates a new thread
+
+// 2. Implementing Runnable
+class MyRunnable implements Runnable {
+    public void run() {
+        System.out.println("Runnable running");
+    }
+}
+new Thread(new MyRunnable()).start();
+
+
+👉 start() creates a new thread and calls run() inside it.
+👉 Calling run() directly just executes in the current thread.
+
+Interview Tip: Always use Runnable/Callable (preferred over extending Thread for better OOP design).
+
+-------------
+
+Q. What is difference between run() and start()?
+Answer:
+run() method:
+run() is just a normal method in the Runnable interface (or overridden in a Thread subclass).
+If you directly call run(), it does NOT start a new thread.
+Instead, it executes like a normal function call in the current thread.
+
+start() method:
+start() is defined in the Thread class.
+When you call start(), the JVM:
+Creates a new thread.
+Calls the run() method internally inside that new thread.
+
+
+-------------
+
+
+Q. Why to prefer Runnable over Thread?
+Answer.
+1. Java does not support multiple inheritance
+In Java, a class can extend only one class.
+If you extend Thread, your class cannot extend any other class.
+But if you implement Runnable, your class is free to extend another class as well.
+
+2. Runnable decouples task from the thread
+Runnable represents the task (what to do).
+Thread represents the worker (who does it).
+By using Runnable, you can separate task logic from threading mechanism, which is cleaner and more flexible.
+
+3. Better thread management with thread pools
+In real-world applications (like web servers), you don’t create threads manually for each task.
+You use thread pools (ExecutorService) which accept Runnable (or Callable) tasks.
+If you extend Thread, you can’t directly pass it to these frameworks.
+
+
+---------------
+
+Q. Difference between Runnable and Callable?
+Answer.
+1. Method Signature
+Runnable:
+public interface Runnable {
+    void run();
+}
+Takes no arguments, returns nothing (void).
+Cannot throw checked exceptions.
+
+Callable:
+public interface Callable<V> {
+    V call() throws Exception;
+}
+Takes no arguments, returns a value of type V (Generic).
+Can throw checked exceptions.
+
+2. Return Type
+Runnable → cannot return any result.
+Callable → returns a result (via generics).
+
+3. Exception Handling
+Runnable → cannot throw checked exceptions (only unchecked runtime exceptions).
+Callable → can throw checked exceptions.
+
+4. Usage
+Runnable → Best when you just want to run a task asynchronously without a return value.
+Callable → Best when you want a result or need to handle checked exceptions.
+
+
+----------------
+
+Q. what does join() method do?
+Answer.
+It waits for the thread to finish before proceeding with main thread operations.
+Eg.
+Thread t = new Thread().start();
+// Main thread operations will continue
+t.join(); // main thread will wait here for thread t to complete
+// main thread continues after that
+
+
+
+===========================================================================
+
+
+TOPIC 2 : THREAD SAFETY
+
+
+Q. What is synchronized keyword?
+Answer.
+The synchronized keyword in Java is used to control access to critical sections of code (methods or blocks)
+So only one thread can execute that section at a time on the same object (or class).
+It ensures thread-safety by preventing race conditions.
+
+When a thread enters a synchronized method/block:
+It acquires a lock (also called a monitor) on the object (for instance methods) or on the class (for static methods).
+No other thread can enter any synchronized method/block on the same object (or class) until the lock is released.
+When the thread exits, it releases the lock, and another waiting thread may acquire it.
+
+Note:
+synchronized static method()   OR    synchronized(ClassName.class) {}
+=> class level lock => all other static synchronized methods also cannot be accessed
+
+synchronized method()   OR    synchronized(this) {}
+=> object level lock => all other synchronized object methods also cannot be accessed.
+
+When you use synchronized:
+Before entering a synchronized block → JVM performs a memory barrier (acquire),
+ensuring the thread’s local cache is invalidated and it sees the latest value from main memory.
+While inside → Only one thread can execute that block on that object monitor.
+When exiting → JVM performs another memory barrier (release),
+flushing all writes back to main memory so other threads can see them.
+So, synchronized ensures both atomicity and visibility.
+
+
+----------------
+
+
+Q. What does volatile keyword do?
+Answer.
+It tells the JVM to always read the value from main memory, not from Thread's local cache.
+Note: due to this all threads see the same data (visibility is maintained)
+but, it does not solve atomicity
+(If multiple threads are updating it at same time, value may become invalid as there is no locking)
+
+
+
+---------------------
+
+
+Q. What are Atomic Classes?
+Answer.
+java.util.concurrent.atomic
+Classes like AtomicInteger, AtomicLong, AtomicReference provide lock-free atomic operations.
+These use low-level CPU instructions (CAS – Compare And Swap) for atomicity.
+
+
+
+======================================================================
+
+TOPIC 3: LOCKS AND SYNCHRONIZATION
+
+
+Q. What does synchronized keyword do ?
+Answer. Explained above
+
+
+-----------------------------
+
+
+Q. What is ReentrantLock?
+Answer.
+ReentrantLock in Java is a class provided in the java.util.concurrent.locks package.
+It gives you more advanced control over locking compared to the synchronized keyword
+
+Key points about ReentrantLock:
+
+1. Reentrant:
+Just like synchronized, the lock is reentrant, meaning that if a thread already holds the lock,
+it can acquire it again without getting blocked (but it must release it the same number of times).
+
+2. Explicit Locking/Unlocking:
+Unlike synchronized, you have to manually acquire and release the lock using lock() and unlock() methods.
+This gives more flexibility, but if you forget unlock(), you may cause deadlocks.
+
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+try {
+    // critical section
+} finally {
+    lock.unlock();
+}
+
+3.Try Locking:
+Provides tryLock() methods, which allow you to attempt to acquire the lock without blocking forever.
+So if you dont acquire the lock, you go to the else part and continue with other operations.
+if (lock.tryLock()) {
+    try {
+        // do operations
+    } finally {
+        lock.unlock();
+    }
+} else {
+    // do some other operations if you didnt get the lock
+}
+
+You can also specify timeout for tryLock()
+=> Wait for 3 seconds to acquire the lock.
+if (lock.tryLock(3, TimeUnit.SECONDS)) {}
+
+
+4. Fairness Policy:
+ReentrantLock can be created as fair or non-fair.
+Fair lock: longest waiting thread gets the lock first (FIFO).
+Non-fair lock (default): lock may be given to a thread that barges in.
+
+ReentrantLock fairLock = new ReentrantLock(true); // fair
+ReentrantLock unfairLock = new ReentrantLock();   // non-fair (default)
+
+
+5. Interruptible Lock Acquisition:
+With lock.lockInterruptibly(), a thread waiting for the lock can be interrupted (t.interrupt())
+and it throws InterruptedException.
+
+
+------------------------
+
+
+Q. If a class/object already has a lock, what is the point of acquiring it again?
+Answer.
+If a thread already holds a ReentrantLock, it can acquire it again without blocking itself.
+Every successful lock() increments an internal hold count.
+Every unlock() decrements that count.
+The lock is only actually released when the hold count reaches zero.
+
+Consider the example:
+class Demo {
+    private final ReentrantLock lock = new ReentrantLock();
+
+    public void methodA() {
+        lock.lock();
+        try {
+            System.out.println("Inside methodA");
+            methodB(); // calls another method that also locks
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void methodB() {
+        lock.lock();
+        try {
+            System.out.println("Inside methodB");
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+
+methodA() acquires the lock.
+Inside it, methodB() is called. methodB() also tries to acquire the same lock.
+If the lock were not reentrant, the thread would deadlock itself (waiting forever on a lock it already owns).
+With ReentrantLock, the second lock.lock() succeeds because the thread already owns it. The hold count becomes 2.
+After two unlock() calls, the hold count returns to 0 and the lock is released.
+
+Note: SYNCHRONIZED is also REENTRANT
+
+
+---------------------
+
+
+Q. How to make synchronized methods with ReentrantLock?
+Answer.
+Create a static ReentrantLock (for class lock (static methods))
+Create a non-static ReentrantLock (for object lock)
+
+eg.
+static class ReentrantCounter {
+    int count = 0;
+    ReentrantLock objectlock = new ReentrantLock();
+    static ReentrantLock classlock = new ReentrantLock();
+
+    public void increment(){
+        objectlock.lock();
+        count += 1;
+        objectlock.unlock();
+    }
+
+    static public someMethod(){
+        classlock.lock();
+        // do something
+        classlock.unlock();
+    }
+}
+
+
+-----------------------
+
+
+Q. What is deadlock?
+Answer. when 2 or more threads are waiting for resources which are being held by another thread
+Such that it creates a cyclic dependency, so no resource gets released and the program continuous indefinitely.
+
+Example present in multithreading package.
+
+
+------------------------
+
+
+
+Q. How to avoid Deadlock?
+Answer:
+Method 1:
+Deadlock can be avoided by lock ordering.
+Decide the order in which locks need to be acquired based on hashcode
+So each object will acquire lock in same order, so deadlock will be prevented.
+Check example in LocksAndSynchronization package.
+
+Method 2:
+Use trylock(), so if lock cannot be acquired it will not wait indefinitely.
+
+
+===============================================================================
+
+TOPIC 4: THREAD COMMUNICATION
+
+Q. What is wait(), notify() and notifyAll()?
+Answer.
+They are methods of the Object class (not Thread!).
+They can only be called inside a synchronized block or method because they depend on the intrinsic lock (monitor) of the object.
+
+wait()
+Puts the current thread into the waiting state.
+The thread releases the lock on the object and waits until another thread notifies it.
+Must be wrapped in a loop (not just if) to recheck the condition when woken up.
+
+notify()
+Wakes up one waiting thread (chosen arbitrarily) that is waiting on the same object’s monitor.
+
+notifyAll()
+Wakes up all waiting threads on that monitor. They will compete to reacquire the lock and continue execution.
+
+FOR USAGE check WaitAndNotifyCommunication package.
+
+
+
+
+
+
+
+=================================================================
+=================================================================
+=================================================================
+
+## 🔑 **Important Topics in Java Multithreading & Concurrency**
+
+### 1. **Thread Basics**
+
+* Thread lifecycle (NEW, RUNNABLE, BLOCKED, WAITING, TIMED\_WAITING, TERMINATED)
+* Creating threads (extending `Thread` vs implementing `Runnable` / `Callable`)
+* `start()` vs `run()`
+
+### 2. **Thread Safety**
+
+* Race conditions
+* Critical sections
+* `synchronized` keyword (methods & blocks)
+* Intrinsic locks & reentrant locks
+
+### 3. **Locks & Synchronization**
+
+* `ReentrantLock`, `ReadWriteLock`, `StampedLock`
+* `synchronized` vs `Lock` differences
+* Deadlocks, Livelocks, Starvation
+
+### 4. **Volatile & Atomicity**
+
+* `volatile` keyword (visibility guarantee, but **not atomicity**)
+* `AtomicInteger`, `AtomicReference`, `compareAndSet()`
+
+### 5. **Thread Communication**
+
+* `wait()`, `notify()`, `notifyAll()`
+* Producer-Consumer problem
+* Spurious wakeups
+
+### 6. **Executors & Thread Pools**
+
+* `Executor`, `ExecutorService`, `ScheduledExecutorService`
+* `submit()` vs `execute()`
+* Thread pool types (`newFixedThreadPool`, `newCachedThreadPool`, `newSingleThreadExecutor`)
+* Shutdown (`shutdown()` vs `shutdownNow()`)
+
+### 7. **Futures & Callables**
+
+* `Future` & `Callable`
+* `Future.get()` blocking
+* `CompletableFuture` (async programming, chaining, combining futures)
+
+### 8. **Java Concurrency Utilities (`java.util.concurrent`)**
+
+* `CountDownLatch`, `CyclicBarrier`, `Semaphore`, `Exchanger`
+* `BlockingQueue` (ArrayBlockingQueue, LinkedBlockingQueue, PriorityBlockingQueue)
+* `ConcurrentHashMap` vs `Collections.synchronizedMap`
+* `CopyOnWriteArrayList`
+
+### 9. **Parallelism**
+
+* Fork/Join framework
+* `RecursiveTask` & `RecursiveAction`
+* Parallel streams (`stream().parallel()`)
+
+### 10. **Advanced Topics**
+
+* Immutability & thread-safety design
+* ThreadLocal
+* Happens-before relationship (Java Memory Model)
+* False sharing, cache coherence
+* Project Loom (virtual threads in Java 21+)
+
+---
+
+## 🎯 **Common Interview Questions**
+
+### **Beginner**
+
+1. Difference between `process` and `thread`?
+2. How to create a thread in Java?
+3. Difference between `Runnable` and `Callable`?
+4. Difference between `start()` and `run()` methods?
+5. What are daemon threads?
+
+### **Intermediate**
+
+6. What is thread safety? How do you achieve it?
+7. Difference between `synchronized` method and `synchronized` block?
+8. What is `volatile` keyword? Can it make a non-atomic operation atomic?
+9. Explain deadlock, livelock, and starvation. How to prevent deadlocks?
+10. Difference between `synchronized` and `ReentrantLock`?
+
+### **Executor & Concurrency Utilities**
+
+11. Difference between `submit()` and `execute()` in ExecutorService?
+12. What is the difference between `shutdown()` and `shutdownNow()`?
+13. When would you use `CountDownLatch` vs `CyclicBarrier`?
+14. Difference between `ConcurrentHashMap` and `HashMap`?
+15. Explain producer-consumer problem and how you’d solve it in Java.
+
+### **Advanced**
+
+16. What is the Java Memory Model? Explain happens-before relationship.
+17. Why is `volatile` not enough for atomic operations?
+18. Difference between `Future` and `CompletableFuture`?
+19. Explain Fork/Join framework with example.
+20. How do parallel streams work internally?
+
+---
+
+👉 If you’re preparing for interviews, I’d suggest practicing **coding problems** on:
+
+* Producer-Consumer using wait/notify & BlockingQueue
+* Deadlock simulation and resolution
+* Thread pool usage with ExecutorService
+* Implementing your own thread-safe Singleton
+
+---
+
+
+
