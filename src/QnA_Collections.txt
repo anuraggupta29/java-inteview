@@ -1,0 +1,287 @@
+Q. Difference between Comparator and Comparable?
+A.
+| Feature            | Comparable (`compareTo`)                    | Comparator (`compare`)                   |
+| ------------------ | ------------------------------------------- | ---------------------------------------- |
+| **Package**        | `java.lang`                                 | `java.util`                              |
+| **Method**         | `compareTo(Object o)`                       | `compare(Object o1, Object o2)`          |
+| **Implementation** | In the class itself                         | In a separate class/object (or lambda)   |
+| **Ordering**       | Single natural ordering                     | Multiple custom orderings                |
+| **When to Use**    | When class has a natural default sort order | When different sorting logics are needed |
+
+You can say, Comparable provides the default ordering strategy at compile time.
+And, Comparator can provide multiple ordering strategy for that class at runtime.
+
+
+Q. Use of boolean equals(Object obj) and int hashCode() methods?
+A. equals()
+checks equality between 2 objects => how the 2 objects should be equated.
+by default is compares based on object reference (address)
+
+hashCode()
+generates hash value to be used in hash based collections like HashSet, MashMap, HashTable
+by default it generates hashCode based on object reference (address)
+
+
+
+Q. Difference between equals() and Comparable->compareTo() ?
+A. equals() defines logical equality between two objects.
+used in collections like HashMap, HashSet to find duplicates
+
+Comparable is used to define ordering of two objects, which will come first in an order.
+used in comparison based algorithms like Collections.sort(), priorityQueue operations, TreeSet, TreeMap
+
+
+=============================================================
+
+
+Q. Difference between Enumerator and Iterator
+Answer:
+| Feature           | Enumerator (Legacy)                    | Iterator (Modern)                                 |
+| ----------------- | -------------------------------------- | ------------------------------------------------- |
+| **Package**       | `java.util`                            | `java.util`                                       |
+| **Introduced in** | JDK 1.0                                | JDK 1.2 (Collections)                             |
+| **Methods**       | `hasMoreElements()`, `nextElement()`   | `hasNext()`, `next()`, `remove()`                 |
+| **Direction**     | Forward only                           | Forward only                                      |
+| **Modification**  | Not allowed                            | `remove()` allowed                              |
+| **Use case**      | Legacy classes (`Vector`, `Hashtable`) | Modern collections (`ArrayList`, `HashSet`, etc.) |
+
+
+| Aspect                                 | Enumerator                                                                                         | Iterator                                                                                        |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Thread Safety                          | Works with `Vector`/`Hashtable` which are synchronized, but enumeration itself is not thread-safe. | Not thread-safe by itself. Throws `ConcurrentModificationException` on concurrent modification. |
+| Behavior under concurrent modification | **Unpredictable results** (no exception).                                                          | **Fail-fast** → `ConcurrentModificationException`.                                              |
+| Modern solution                        | Legacy, discouraged.                                                                               | Use `Iterator` with `synchronized` or `Concurrent` collections.                                 |
+
+
+=============================================================
+
+
+Q. HashMap Internal Implementation?
+Answer:
+1. Underlying Data Structure
+In Java 8+, HashMap is implemented as:
+Array of buckets (Node<K,V>[] table)
+Each bucket stores a linked list or balanced tree (Red-Black Tree) of nodes.
+
+2. Node Structure
+Each entry in the HashMap is stored as a Node object:
+class Node<K,V> {
+    final int hash;
+    final K key;
+    V value;
+    Node<K,V> next; // for linked list (chaining)
+}
+
+3. How put(K key, V value) Works
+Compute hash of key using hashCode() and some bit manipulation.
+int hash = hash(key.hashCode());
+
+Find bucket index:
+index = (n - 1) & hash;  // n = table.length  (this is same as hash%n as n is always a power of 2)
+
+If bucket empty → create new node.
+If bucket not empty → check:
+If same key already exists → update value.
+If different key but hash collision → add new node to linked list.
+If list grows beyond threshold (8 nodes) → convert linked list to Red-Black Tree (to avoid O(n) lookup).
+
+4. How get(Object key) Works
+Compute hash of key → find bucket index.
+If bucket empty → return null.
+Else, traverse linked list/tree:
+Compare using hash + equals() for key.
+Return corresponding value.
+
+5. Resizing (Rehashing)
+HashMap doubles its size when load factor exceeds 0.75.
+Default: initial capacity = 16, load factor = 0.75.
+On resize:
+A new array (double size) is created.
+All nodes are rehashed and redistributed.
+
+6. Time Complexity
+put() → O(1) average, O(log n) in worst case (due to tree).
+get() → O(1) average, O(log n) in worst case.
+remove() → O(1) average.
+
+7. Null Handling
+Allows one null key (stored in bucket[0]).
+Allows multiple null values.
+
+8. Thread Safety
+HashMap is not synchronized.
+For thread-safe version → use:
+Collections.synchronizedMap()
+ConcurrentHashMap
+
+
+
+Q. Why Hash is stored in Node, when directly key can be compared for same bucket?
+Answer:
+If you are using a large object as key, comparing using equals() can take time to hash is compared first.
+(Possible confusion) Also, all keys in a bucket can have different hashcode, as index is hash%16.
+so for eg. the bucket for 15 and 31 will be same.
+
+
+======================================================
+
+
+In Java, the Collections Framework is a set of classes and interfaces that provide data structures and algorithms to store,
+manipulate, and retrieve objects efficiently.
+
+Here’s the structure of Java Collections Framework (JCF):
+
+1. Root Interfaces
+Collection<E>
+Base interface for all collection classes (except Map).
+Defines operations like add(), remove(), size(), iterator().
+Map<K, V>
+Represents key-value pairs.
+Not a subtype of Collection.
+
+
+2. Collection Subinterfaces
+
+a) List<E>
+Ordered collection (allows duplicates, index-based access).
+Implementations:
+ArrayList (dynamic array, fast random access, slower insert/remove in middle).
+LinkedList (doubly linked list, fast insert/remove, slower access).
+Vector (legacy, synchronized).
+Stack (extends Vector, LIFO).
+
+b) Set<E>
+Unordered collection (no duplicates).
+Implementations:
+HashSet (backed by HashMap, unordered).
+LinkedHashSet (insertion order maintained).
+TreeSet (sorted order, backed by TreeMap, implements NavigableSet).
+
+c) Queue<E>
+Collection for holding elements prior to processing (FIFO or other orders).
+Implementations:
+PriorityQueue (ordered by priority, heap-based).
+ArrayDeque (double-ended queue, stack/queue).
+LinkedList (also implements Queue).
+
+d) Deque<E>
+Double-ended queue (insert/remove from both ends).
+Implementations:
+ArrayDeque
+LinkedList
+
+
+3. Map Subinterfaces
+SortedMap<K,V> → maintains sorted keys.
+Implementation: TreeMap
+NavigableMap<K,V> → provides navigation methods like floorKey(), ceilingKey().
+Implementation: TreeMap
+HashMap<K,V> → unsorted, allows null keys/values.
+LinkedHashMap<K,V> → insertion order preserved.
+Hashtable<K,V> → legacy, synchronized.
+ConcurrentHashMap<K,V> → thread-safe alternative.
+
+
+4. Utility Classes
+Collections → utility class with static methods (sort(), binarySearch(), reverse(), synchronizedList(), etc.).
+Arrays → for working with arrays (sort(), asList(), etc.).
+
+
+===================================================
+
+
+Java Collections Framework Hierarchy
+
+A. Collection <<Interface>>
+
+List <<Interface>> (ordered, duplicates allowed)
+---> ArrayList
+---> LinkedList (also implements Queue)
+---> Vector
+------> Stack
+
+Set <<Interface>>  (unordered, no duplicates)
+---> HashSet
+---> LinkedHashSet
+---> SortedSet
+------> NavigableSet
+---------> TreeSet
+
+Queue <<Interface>>  (FIFO / priority order)
+---> PriorityQueue
+---> Deque
+---------> ArrayDeque
+---------> LinkedList (also implements List)
+
+
+B. Map <<Interface>>  (separate branch, key–value pairs)
+
+HashMap
+---> LinkedHashMap
+
+SortedMap
+---> NavigableMap
+---------> TreeMap
+
+Hashtable (legacy)
+ConcurrentHashMap
+
+
+C. Utility Classes
+Collections (algorithms)
+Arrays (array helpers)
+
+
+===================================================
+
+
+1. What is the difference between Collection and Collections?
+Collection → Root interface of the collection hierarchy (List, Set, Queue).
+Collections → Utility class (with static methods like sort(), binarySearch(), reverse()).
+
+
+2. What is the difference between List, Set, and Map?
+List → Ordered, allows duplicates (e.g., ArrayList, LinkedList).
+Set → Unordered, no duplicates (e.g., HashSet, TreeSet).
+Map → Key-value pairs, no duplicate keys allowed (e.g., HashMap, TreeMap).
+
+
+3. What is the difference between HashMap and Hashtable?
+HashMap → Not synchronized, allows null key and multiple null values.
+Hashtable → Synchronized (thread-safe), does NOT allow null key or null values.
+
+
+4. What is the difference between ArrayList and LinkedList?
+ArrayList → Backed by dynamic array, fast random access, slower insert/delete in middle.
+LinkedList → Doubly linked list, faster insert/delete, slower access.
+
+
+5. What is the difference between HashSet and TreeSet?
+HashSet → Unordered, backed by HashMap, O(1) lookup.
+TreeSet → Sorted order (natural/comparator), backed by TreeMap, O(log n) lookup.
+
+
+6. How does HashMap work internally?
+Uses array of buckets + linked list / tree for collisions (hashing + equals).
+Java 8+: If bucket size > 8, linked list → Red-Black tree (to reduce O(n) → O(log n)).
+
+
+7. What is the difference between Iterator and ListIterator?
+Iterator → Works for all collections, one-direction traversal, remove().
+ListIterator → Works only for List, bidirectional traversal, can add() elements.
+
+
+8. What is the difference between fail-fast and fail-safe iterators?
+Fail-fast (e.g., Iterator of ArrayList, HashMap): Throws ConcurrentModificationException if modified during iteration.
+Fail-safe (e.g., ConcurrentHashMap, CopyOnWriteArrayList): Works on a copy, no exception.
+
+
+9. What are Comparable and Comparator?
+Comparable → Used for natural ordering (compareTo()), only one sorting sequence per class.
+Comparator → Used for custom sorting (compare()), multiple sorting strategies possible.
+
+
+10. What is the difference between ConcurrentHashMap and SynchronizedMap?
+SynchronizedMap → Entire map locked → performance hit.
+ConcurrentHashMap → Lock striping (buckets/segments locked), better concurrency, allows concurrent reads and partial writes.
+

@@ -1,0 +1,54 @@
+Q. Checked vs Unchecked exceptions?
+A. Checked exceptions:
+they extend the Exception class
+and are checked at compile time, you must handle them (try/catch or throws keyword at method)
+Used for external factors: I/O, DB connection, Network
+they are used for recoverable conditions, eg. if sql is invalid indicate user to correct the sql
+
+Eg, IOException, SQLException
+
+Unchecked Exceptions:
+they extend the RuntimeException class
+they are checked at runtime, it's not required to handle them.
+(these exceptions happen due to bugs, so compiler assumes you will fix the bug rather than handling using try/catch)
+
+Example: NullPointerException, ArithmeticException, ArrayIndexOutOfBoundsException
+
+
+
+Q. Exception vs Error?
+A. Exception: happens due to programming logic or external factors (explained in prev question)
+
+Error: Serious problems that happen in JVM/Environment.
+You cannot recover from them, and they cannot be handled.
+
+Eg, OutOfMemoryError, StackOverflowError, VirtualMachineError
+
+java.lang.Object
+   ↳ java.lang.Throwable   (java.lang)
+        ↳ java.lang.Exception   (java.lang)
+        |      ↳ java.lang.RuntimeException   (java.lang)
+        |             ↳ ArithmeticException, NullPointerException, etc.
+        |
+        ↳ java.lang.Error   (java.lang)
+               ↳ OutOfMemoryError, StackOverflowError, etc.
+
+
+Q. What is use of finally in error handling?
+A. The finally block is always executed, regardless of whether an exception was thrown or not
+(maybe not executed in extreme cases like System.exit(0) or JVM crash, or errors like OutOfMemoryError, StackOverflowError).
+It’s mainly used for cleanup code (closing files, releasing DB connections, freeing resources).
+It executes even if there is return statement in try and catch block!
+
+
+
+Q. What is try-with-resources?
+In this you can mention the resources in try block as parameters,
+and these resources are closed automatically even if there is an exception.
+So finally block is not required to close these resources.
+Note: those resources must implement Closeable interface, so Java knows how to close them.
+
+try(
+    CustomFileReader cos = new CustomFileReader();  // this will be closed automatically as it implements Closeable
+    // can add multiple resources
+){.....

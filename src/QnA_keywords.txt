@@ -90,3 +90,27 @@
 
 
 
+==========================================================================
+
+Q. what is native keyword in java?
+A. It marks a method which is not written in Java.
+It is usually written in C/CPP, stored in a native library (.dll file on windows)
+implemented outside JVM using the Java native interface
+You load the native library using System.loadLibrary() or System.load().
+
+
+Q. What does volatile keyword do?
+A. It tells the JVM to always read the value from main memory, not from Thread's local cache.
+Note: due to this all threads see the same data (visibility is maintained)
+but, it does not solve atomicity
+(If multiple threads are updating it at same time, value may become invalid as there is no locking)
+
+
+Q. what does transient keyword do?
+A. If a class implements serializable
+i.e it can be serialized (converted to bytes) and written to disk and deserialized
+
+and there are some fields in the class which we don't want serialized,
+then we mark them as transient so those fields will be ignored.
+
+Required to avoid serializing large/unnecessary/sensitive objects.

@@ -1,0 +1,225 @@
+Q. What are Generics?
+Answer:
+Generics in Java let you write code that works with different data types in a type-safe way.
+They were introduced in Java 5 to:
+1. Ensure type safety at compile-time
+2. Avoid casting
+3. Promote code reusability
+
+Example:
+🔹 Without Generics (Old Java 1.4 Style)
+List list = new ArrayList();
+list.add("Hello");
+list.add(10); // allowed
+
+String s = (String) list.get(0); // must cast
+Integer i = (Integer) list.get(1);
+
+👉 Problem: No type checking at compile time (could cause ClassCastException at runtime).
+
+🔹 With Generics
+List<String> list = new ArrayList<>();
+list.add("Hello");
+// list.add(10); ❌ compile-time error
+
+String s = list.get(0); // no cast needed
+
+👉 Benefit: Type safety and no explicit casting.
+
+
+Q. Define a Generic Class
+Answer:
+class Box<T> {
+    private T value;
+    public void set(T value) { this.value = value; }
+    public T get() { return value; }
+}
+
+// Usage
+Box<String> b1 = new Box<>();
+b1.set("Hello");
+System.out.println(b1.get());
+
+Box<Integer> b2 = new Box<>();
+b2.set(100);
+System.out.println(b2.get());
+
+
+Q. Define a Generic method
+Answer:
+public class Util {
+    public static <T> void printArray(T[] arr) {
+        for (T t : arr) {
+            System.out.println(t);
+        }
+    }
+}
+
+// Usage
+Integer[] nums = {1, 2, 3};
+Util.printArray(nums);
+
+String[] names = {"A", "B"};
+Util.printArray(names);
+
+
+Q. What are Bounded Type Parameters in Generics?
+Answer:
+Restrict what types can be passed.
+Upper bound: <T extends Number> (only Number or subclasses).
+Lower bound: <? super Integer> (accepts Integer or its superclasses).
+
+public <T extends Number> void printDoubleValue(T num) {
+    System.out.println(num.doubleValue());
+}
+public void addNumbers(List<? super Integer> list) {
+    list.add(10); // OK
+}
+
+
+Q. What are Wildcards in Generics?
+Answer:
+Represent unknown types: ?.
+Example:
+    void printList(List<?> list) { ... }
+Variants:
+    ?, ? extends T, ? super T.
+
+
+Q. What are generic methods vs generic classes?
+Answer:
+Generic class: Type parameter declared at class level.
+Generic method: Type parameter declared at method level.
+class Box<T> { T value; }       // Generic class
+<T> void print(T t) { ... }     // Generic method
+
+
+Q. What are some limitations of Generics in Java?
+Answer:
+Cannot use primitives (int, double) directly.
+Cannot create generic arrays (new T[10]).
+Cannot use instanceof with parameterized types (if (obj instanceof List<String>)).
+Type information erased at runtime → no runtime type checks.
+
+
+Q. What is meaning of Invariant?
+Answer:
+In Java generics are invariant, which means:
+👉 Even if type A is a subtype of B,
+List<A> is NOT a subtype of List<B>.
+
+
+===========================================================
+
+
+Q. What is Type Erasure in Generics?   (***********IMPORTANT************)
+Answer:
+Generics exist only at compile time.
+At runtime, the JVM replaces type parameters with their bounded type (or Object if unbounded).
+Example:
+List<String> l1 = new ArrayList<>();
+List<Integer> l2 = new ArrayList<>();
+System.out.println(l1.getClass() == l2.getClass()); // true
+
+
+Q. Can you overload a method by changing generic type parameters?   (***********IMPORTANT************)
+Answer:
+No. Due to type erasure, the compiler sees both methods as the same.
+
+public void print(List<String> list) {}
+public void print(List<Integer> list) {} // ❌ compile-time error
+
+
+
+Q. What is the difference between List<Object> and List<?>?   (******************IMPORTANT********************)
+Answer:
+At first glance, List<Object> and List<?> look similar, but they’re quite different.
+
+🔹 List<Object>
+A list that can only hold Object and its subclasses.
+You can add any object into it (String, Integer, custom classes, etc.).
+Reading returns elements as Object.
+
+List<Object> list = new ArrayList<>();
+list.add("Hello");   // ✅ String allowed
+list.add(10);        // ✅ Integer allowed
+
+Object obj = list.get(0); // ✅ returns Object
+
+⚠️ But note: you cannot assign a List<String> to List<Object> because generics are invariant.
+
+List<String> s = new ArrayList<>();
+// List<Object> o = s; // ❌ Compile-time error
+
+
+🔹 List<?>
+A list of unknown type.
+It could be List<String>, List<Integer>, List<Object>, etc.
+
+You cannot add anything into it (except null), because the compiler doesn’t know the actual type.
+Reading is allowed, but only as Object.
+
+List<?> list = new ArrayList<String>();
+// list.add("Hello"); // ❌ Compile error
+// list.add(10);      // ❌ Compile error
+list.add(null);       // ✅ allowed
+
+Object obj = list.get(0); // ✅ safe
+
+In above example, the compiler doesn't know ? refers to String, as type info is erased at the variable level.
+
+| Aspect               | `List<Object>`                             | `List<?>`                                                  |
+| -------------------- | ------------------------------------------ | ---------------------------------------------------------- |
+| **What it holds**    | Objects of any type (mixed types allowed)  | A list of some unknown type                                |
+| **Adding elements**  | ✅ Can add any object                       | ❌ Cannot add (except `null`)                               |
+| **Reading elements** | Returns `Object`                           | Returns `Object`                                           |
+| **Assignability**    | `List<Object>` only accepts `List<Object>` | `List<?>` can accept `List<String>`, `List<Integer>`, etc. |
+
+
+
+Q. when we do List<?> lu = new ArrayList<String>(), wont compiler know it's for string?    (******************IMPORTANT********************)
+Answer:
+List<?> lu = new ArrayList<String>();
+
+
+So you’re right: it knows that lu is referencing a List<String>.
+But here’s the subtlety 👉 the type information is lost in the variable declaration because of the ?.
+
+🔹 Step by Step
+Right-hand side:
+new ArrayList<String>() → this is a List<String>. ✅ Compiler knows it’s for String.
+
+Left-hand side:
+List<?> lu → says “lu is a list of some unknown type.”
+The wildcard ? means:
+could be List<String>
+could be List<Integer>
+could be List<Object>
+…compiler doesn’t know which one.
+
+Result:
+The assignment is legal, because List<String> is compatible with List<?>.
+But once it’s assigned, the type info is erased at the variable level:
+
+You can’t add anything (except null) because compiler won’t assume it’s String.
+You can still safely read values, but only as Object.
+
+🔹 Example
+List<?> lu = new ArrayList<String>();
+// lu.add("hello");  // ❌ not allowed
+lu.add(null);        // ✅ allowed
+
+Object o = lu.get(0); // ✅ only Object is guaranteed
+
+Why is lu.add("hello") forbidden?
+Because from the compiler’s point of view,
+lu could just as well have been a List<Integer> — it only knows it’s "a list of something".
+Allowing "hello" would break type safety.
+
+🔹 Key Idea
+At the RHS, the compiler knows it’s a List<String>.
+At the LHS (variable declaration), the ? erases that info: "this variable could be any list, I won’t assume more."
+This is how Java maintains type safety with wildcards.
+
+✅ So the compiler does know at the moment of assignment,
+but the wildcard discards that knowledge because you explicitly said "I don’t care which type."

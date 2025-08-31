@@ -1,0 +1,95 @@
+CONCEPTUAL QUESTIONS
+
+Q. What is the difference between a Stream and a Collection in Java?
+Answer:
+Collection stores data in memory; Stream is a pipeline for processing data.
+Stream is consumed only once; Collections can be reused.
+Stream can be infinite, Collections are finite.
+
+
+Q. What are the advantages of using Streams?
+Answer:
+Declarative, concise code.
+Lazy evaluation (intermediate operations are executed only when terminal operation is called).
+Supports parallelism.
+Simplifies bulk data processing.
+
+
+Q. What is the difference between intermediate and terminal operations in Streams?
+Answer:
+Intermediate: return a new Stream. They are also lazy. (filter(), map(), flatMap(), distinct(), limit(), skip(), sorted()).
+Terminal: produces a result after consuming stream (collect(), reduce(), forEach(), count(), min(), max()).
+
+
+Q. What is the difference between map() and flatMap()?
+Answer:
+map() transforms each element into one element.
+flatMap() transforms each element into 0, 1, or many elements (flattens multiple streams).
+
+
+=====================================================
+
+
+PERFORMANCE AND BEHAVIOR
+
+Q. What is lazy evaluation in Streams?
+Answer:
+Intermediate operations are not executed until a terminal operation is invoked.
+Example: list.stream().filter(x -> { System.out.println(x); return x>10; }); prints nothing until terminal op is applied.
+
+
+Q. What is short-circuiting in Streams?
+Answer:
+Some operations stop processing early, e.g., findFirst(), anyMatch(), limit(n).
+
+
+Q. What is the difference between forEach() and forEachOrdered()?
+Answer:
+forEach() may not preserve order in parallel streams.
+forEachOrdered() always respects encounter order.
+
+
+Q. What are the performance considerations between sequential and parallel streams?
+Answer:
+Parallel streams split work across multiple threads.
+Useful for large datasets, CPU-intensive operations.
+Overhead may make them slower for small collections or I/O-bound tasks.
+
+
+Q. Why are streams considered non-reusable?
+Answer:
+Once a terminal operation is invoked, the stream pipeline is consumed and closed.
+
+
+=====================================================
+
+
+
+ADVANCED
+
+Q. How does reduce() differ from collect()?
+Answer:
+reduce() reduces elements to a single value (sum, max, etc.).
+collect() is mutable reduction (e.g., to List, Set, Map).
+
+
+Q. What is the difference between findFirst() and findAny()?
+findFirst() always returns the first element in encounter order.
+findAny() may return any element (faster in parallel streams).
+
+
+Q. Can a Stream be infinite? Give an example.
+Answer:
+Stream<Integer> infinite = Stream.iterate(1, n -> n + 1);
+infinite.limit(10).forEach(System.out::println);
+
+
+Q. What are stateless vs stateful operations in Streams?
+Answer:
+Stateless: don’t depend on previous elements (filter, map).
+Stateful: require knowledge of other elements (sorted, distinct).
+
+
+Q. What happens if you modify a Collection while operating on its Stream?
+Answer:
+You may get ConcurrentModificationException unless working on concurrent collections.

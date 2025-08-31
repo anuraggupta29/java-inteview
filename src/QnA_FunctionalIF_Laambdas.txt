@@ -1,0 +1,101 @@
+1. What is a functional interface in Java?
+A functional interface is an interface that has exactly one abstract method.
+It may have default and static methods.
+Examples: Runnable, Callable, Comparator, Predicate.
+
+
+2. Is @FunctionalInterface annotation mandatory?
+No, it’s optional.
+But it helps the compiler enforce the rule of having only one abstract method.
+If you accidentally add a second abstract method, compilation fails.
+
+
+3. Can a functional interface extend another interface?
+Yes, if the parent interface has no abstract method or only the same abstract method.
+If it adds extra abstract methods → it won’t remain functional.
+
+
+4. Difference between anonymous inner class and lambda expression?
+Anonymous class: Creates a new class at runtime → more verbose.
+Lambda: Lightweight, uses invokedynamic at bytecode level → cleaner & faster.
+this keyword: In an anonymous class → refers to the anonymous class.
+In a lambda → refers to the enclosing class.
+
+
+5. Can a lambda throw checked exceptions?
+Yes, but only if the functional interface method declares it.
+Example:
+@FunctionalInterface
+interface FileProcessor {
+    void read() throws IOException;
+}
+FileProcessor fp = () -> { throw new IOException("fail"); };
+
+
+6. What is the syntax of a lambda expression?
+() -> System.out.println("No params");        // no params
+(x) -> x * x;                                // single param
+(x, y) -> { return x + y; };                 // multiple params, block
+
+
+7. Can you access this inside a lambda?
+Yes, but it refers to the enclosing class, not the lambda itself.
+Anonymous class creates a new scope; lambda doesn’t.
+
+
+8. What are “effectively final” variables in lambdas?
+Lambdas can access local variables only if they are final or effectively final (not modified after assignment).
+This ensures thread safety & consistent behavior.
+
+
+9. What if functional interface has Object methods?
+Methods like toString(), equals(), hashCode() don’t count as abstract methods,
+since every interface implicitly inherits them from Object.
+
+
+10. Difference between -> and ::?
+-> → Lambda expression.
+:: → Method reference (shorthand when lambda just calls a method).
+Example:
+list.forEach(x -> System.out.println(x));  // lambda
+list.forEach(System.out::println);         // method reference
+
+
+11. Can lambdas be recursive?
+Yes, but you must use a variable reference:
+Function<Integer, Integer> factorial = new Function<>() {
+    @Override
+    public Integer apply(Integer n) {
+        return (n == 0) ? 1 : n * this.apply(n - 1);
+    }
+};
+System.out.println(factorial.apply(5)); // 120
+
+
+12. Functional IF examples:
+| Interface          | Method              | Use Case                  |
+| ------------------ | ------------------- | ------------------------- |
+| Runnable           | `void run()`        | Run a task in a thread    |
+| Callable<V>        | `V call()`          | Task with return value    |
+| Comparator<T>      | `int compare(T, T)` | Sorting, ordering         |
+| Comparable<T>      | `int compareTo(T)`  | Sorting, ordering         |
+| Predicate<T>       | `boolean test(T)`   | Conditions, filtering     |
+| Function<T,R>      | `R apply(T)`        | Transform values          |
+| Consumer<T>        | `void accept(T)`    | Consume input (no return) |
+| Supplier<T>        | `T get()`           | Lazy fetch or generator   |
+| BiFunction<T,U,R>  | `R apply(T,U)`      | Combine two inputs        |
+| UnaryOperator<T>   | `T apply(T)`        | Transform same type       |
+| BinaryOperator<T>  | `T apply(T,T)`      | Reduce two values         |
+
+
+13. Functional Interfaces used in streams
+| Stream Operation                          | Functional Interface                                           |
+| ----------------------------------------- | -------------------------------------------------------------- |
+| `filter()`                                | Predicate<T>                                                   |
+| `map()`, `flatMap()`                      | Function<T, R>                                                 |
+| `forEach()`, `peek()`                     | Consumer<T>                                                    |
+| `generate()`                              | Supplier<T>                                                    |
+| `reduce()` (two args)                     | BinaryOperator<T>                                              |
+| `reduce()` (three args)                   | BiFunction<T,U,R> (accumulator), BinaryOperator<T> (combiner)  |
+| `iterate()`                               | UnaryOperator<T>                                               |
+| `allMatch()`, `anyMatch()`, `noneMatch()` | Predicate<T>                                                   |

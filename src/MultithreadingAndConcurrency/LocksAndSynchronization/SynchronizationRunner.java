@@ -15,7 +15,7 @@ class BankAccountHandler {
     }
 
 
-    static int bankCode(){
+    static synchronized int bankCode(){
         return bankCode;
     }
 

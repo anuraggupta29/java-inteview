@@ -3,13 +3,6 @@ A. protected is accessible in same package and also in subclasses outside of pac
 Default is only accessible inside the package.
 
 
-Q. what is native keyword in java?
-A. It marks a method which is not written in Java.
-It is usually written in C/CPP, stored in a native library (.dll file on windows)
-implemented outside JVM using the Java native interface
-You load the native library using System.loadLibrary() or System.load().
-
-
 Q. what methods and variables interface allows?
 Ans. only default/static methods
 default -> those methods have some default implementation
@@ -21,13 +14,6 @@ Q. what does this() do in java?
 A. It calls another constructor for the object
 this() -> will call constructor with no parameters
 this(name, age) => will call constructor with 2 parameters
-
-
-Q. What does volatile keyword do?
-A. It tells the JVM to always read the value from main memory, not from Thread's local cache.
-Note: due to this all threads see the same data (visibility is maintained)
-but, it does not solve atomicity
-(If multiple threads are updating it at same time, value may become invalid as there is no locking)
 
 
 Q. What is the difference when final is used with primitive and object variables?
@@ -42,77 +28,10 @@ p = new Person("hement"); // not allowed (reference cannot be modified)
 p.name = "hement"  // allowed (values inside can change)
 
 
-Q. what does transient keyword do?
-A. If a class implements serializable
-i.e it can be serialized (convered to bytes) and written to disk and deserialized
-
-and there are some fields in the class which we dont want serialized,
-then we mark them as transient so those fields will be ignored.
-
-Required to avoid serializing large/unnecessary/sensitive objects.
-
-
-Q. Checked vs Unchecked exceptions?
-A. Checked exceptions:
-they extend the Exception class
-and are checked at compile time, you must handle them (try/catch or throws keyword at method)
-Used for external factors: I/O, DB connection, Network
-they are used for recoverable conditions, eg. if sql is invalid indicate user to correct the sql
-
-Eg, IOException, SQLException
-
-Unchecked Exceptions:
-they extend the RuntimeException class
-they are checked at runtime, its not required to handle them.
-(these exceptions happen due to bugs, so compiler assumes you will fix the bug rather than handling using try/catch)
-
-Example: NullPointerException, ArithmeticException, ArrayIndexOutOfBoundsException
-
-
-
-Q. Exception vs Error?
-A. Exception: happens due to programming logic or external factors (explained in prev question)
-
-Error: Serious problems that happen in JVM/Environment.
-You cannot recover from them, and they cannot be handled.
-
-Eg, OutOfMemoryError, StackOverflowError, VirtualMachineError
-
-java.lang.Object
-   ↳ java.lang.Throwable   (java.lang)
-        ↳ java.lang.Exception   (java.lang)
-        |      ↳ java.lang.RuntimeException   (java.lang)
-        |             ↳ ArithmeticException, NullPointerException, etc.
-        |
-        ↳ java.lang.Error   (java.lang)
-               ↳ OutOfMemoryError, StackOverflowError, etc.
-
-
-Q. What is use of finally in error handling?
-A. The finally block is always executed, regardless of whether an exception was thrown or not
-(except in extreme cases like System.exit(0) or JVM crash, or errors like OutOfMemoryError, StackOverflowError).
-It’s mainly used for cleanup code (closing files, releasing DB connections, freeing resources).
-It executes even if there is return statement in try and catch block!
-
-
-
-Q. What is try-with-resources?
-In this you can mention the resources in try block as parameters,
-and these resources are closed automatically even if there is an exception.
-So finally block is not required to close these resources.
-Note: those resources must implement Closeable interface, so Java knows how to close them.
-
-try(
-    CustomFileReader cos = new CustomFileReader();  // this will be closed automatically as it implements Closeable
-    // can add multiple resources
-){.....
-
-
-
 
 Q. what does instanceof do?
 A. it returns true if the object is of the same class, otherwise false.
-if object is null, then it also returns false;
+if object is null, then it also returns false.
 
 Eg.
 Object a = "Anurag";
@@ -123,7 +42,7 @@ both will be printed as its a string, and string extends object (so its instance
 
 
 Q. what does .getClass() do?
-A. It return the class of the object it has additional methods to get name in different forms.
+A. It return the class of the object. it has additional methods to get name in different forms.
 
 getClass()
 Defined in java.lang.Object.
@@ -257,12 +176,10 @@ allows to give implementation to abstract classes/interfaces on the fly.
 
 
 
-
 Q. What are final classes?
 A. those classes which cannot be extended.
 Eg.
 final class Car {}
-
 
 
 
@@ -276,24 +193,4 @@ Extending classes must declare themselves as sealed, non-sealed or final.
 
 non-sealed classes can be extended by any class.
 sealed classes which are extending from another sealed class do not need to specify permits
-
-
-
-Q. Use of boolean equals(Object obj) and int hashCode() methods?
-A. equals()
-checks equality between 2 objects of CharFrequency => how the 2 objects should be equated.
-by default is compares based on object reference (address)
-
-hashCode()
-generates hash value to be used in hash based collections like HashSet, MashMap, HashTable
-by default it generates hashCode based on object reference (address)
-
-
-
-Q. Difference between equals() and Comparable->compareTo() ?
-A. equals() defines logical equality between two objects.
-used in collections like HashMap, HashSet to find duplicates
-
-Comparable is used to define ordering of two objects, which will come first in an order.
-used in comparison based algorithms like Collections.sort(), priorityQueue operations, TreeSet, TreeMap
 

@@ -1,0 +1,31 @@
+1. String
+Package: java.lang.String
+Example:
+String s = "Hello";
+s = s + " World"; // Creates a new String object, "Hello World"
+
+2. StringBuilder
+Package: java.lang.StringBuilder
+Example:
+StringBuilder sb = new StringBuilder("Hello");
+sb.append(" World"); // Modifies the same object
+System.out.println(sb); // "Hello World"
+
+3. StringBuffer
+Package: java.lang.StringBuffer
+Example:
+StringBuffer sbf = new StringBuffer("Hello");
+sbf.append(" World");
+System.out.println(sbf); // "Hello World"
+
+
+Summary
+
+| Feature         | String                           | StringBuilder                 | StringBuffer                 |
+| --------------- | -------------------------------- | ----------------------------- | ---------------------------- |
+| **Mutability**  | Immutable                        | Mutable                       | Mutable                      |
+| **Thread-Safe** | Yes (immutable)                  | No                            | Yes (synchronized)           |
+| **Performance** | Slowest (new object each change) | Fast (no sync overhead)       | Slower than `StringBuilder`  |
+| **Use Case**    | Fixed/constant data              | Single-threaded modifications | Multi-threaded modifications |
+
+---
