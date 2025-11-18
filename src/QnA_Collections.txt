@@ -118,7 +118,7 @@ ConcurrentHashMap
 
 Q. Why Hash is stored in Node, when directly key can be compared for same bucket?
 Answer:
-If you are using a large object as key, comparing using equals() can take time to hash is compared first.
+If you are using a large object as key, comparing using equals() can take time, so hash is compared first.
 (Possible confusion) Also, all keys in a bucket can have different hashcode, as index is hash%16.
 so for eg. the bucket for 15 and 31 will be same.
 
@@ -162,7 +162,7 @@ Collection for holding elements prior to processing (FIFO or other orders).
 Implementations:
 PriorityQueue (ordered by priority, heap-based).
 ArrayDeque (double-ended queue, stack/queue).
-LinkedList (also implements Queue).
+LinkedList (also implements List).
 
 d) Deque<E>
 Double-ended queue (insert/remove from both ends).

@@ -39,6 +39,7 @@ public class GenericsRunner {
         }
     }
 
+
     public static void printListWild(List<?> lis){
         for(Object i : lis){
             System.out.println(i.getClass());
@@ -55,7 +56,8 @@ public class GenericsRunner {
         System.out.println(res1.getClass() == res2.getClass()); // true
 
         System.out.println(res1 instanceof Response);
-        System.out.println(res1 instanceof Response<Integer>);
+        System.out.println(res1 instanceof Response<Integer>);  // some compiler may give error for this as well
+
         // following will not compile as jvm knows at compile time that res1 is of <Integer>
         //System.out.println(res1 instanceof Response<String>);
 

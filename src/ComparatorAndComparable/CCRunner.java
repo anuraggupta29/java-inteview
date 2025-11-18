@@ -38,7 +38,6 @@ public class CCRunner {
         System.out.println(persons);
 
         Comparator<Person> cmp = (p1,p2) -> p1.name.compareTo(p2.name);
-        // custom comparator will compare based on name
 
         persons.sort(cmp);
         System.out.println(persons);
@@ -46,7 +45,7 @@ public class CCRunner {
 
         // Difference
 
-        // Comparable -> implemented by the class, provides the default comparision strategy
+        // Comparable -> implemented by the class, provides the default comparison strategy
 
         // Comparator -> create a separate class or lambda which provides strategy to compare 2 objects of any type
         // multiple different strategy can be created and passed where to be used.

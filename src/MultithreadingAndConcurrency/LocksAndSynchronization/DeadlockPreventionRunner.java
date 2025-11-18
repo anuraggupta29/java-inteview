@@ -90,8 +90,6 @@ public class DeadlockPreventionRunner {
             }
         };
 
-        // Both threads will try to call the synchronized methods of other object from
-        // a synchronized method of current object. So both will be in a deadlock
 
         Thread connectPhoneThread = new Thread(connectToDriverPhone);
         Thread startCarThread = new Thread(startCar);

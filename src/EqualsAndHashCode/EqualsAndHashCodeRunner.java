@@ -4,7 +4,7 @@ import java.util.*;
 
 class Solution {
     class CharFrequency {
-        private final int[] arr = new int[26];
+        public final int[] arr = new int[26];
 
         CharFrequency(String s){
             for(char c : s.toCharArray()){

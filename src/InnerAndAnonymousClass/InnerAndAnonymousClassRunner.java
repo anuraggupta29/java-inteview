@@ -62,6 +62,9 @@ abstract class Boat{
     abstract void runBoat();
 }
 
+abstract class Calculator{
+    abstract int operate(int a, int b);
+}
 
 
 
@@ -96,7 +99,6 @@ public class InnerAndAnonymousClassRunner {
         // anonymous class
         // allows to give implementation to abstract classes/interfaces on the fly
 
-        //Boat boat = new Boat(); // not allowed, but we can do this
         Boat boat = new Boat(){
             @Override
             void runBoat() {
@@ -104,6 +106,6 @@ public class InnerAndAnonymousClassRunner {
             }
         };
 
-        boat.runBoat();
+        //Calculator add = (a,b) -> {return a+b}; // does not work
     }
 }

@@ -38,7 +38,7 @@ public class ReentrantLockThreadSafetyRunner {
         Counter counter = new Counter();
         IncrementerRunnable runnable = new IncrementerRunnable(counter);
 
-        // 100 threads doing same task
+        // 1000 threads doing same task
         // => 1000 threads each doing 100 increments => 100000 operation
         // but final value may not be 100000 at the end
         for(int i=0; i<1000; i++){
@@ -61,6 +61,6 @@ public class ReentrantLockThreadSafetyRunner {
         }
 
         Thread.sleep(5000);  // 5 seconds
-        System.out.println("Synchronized Count is : " + counter.count);  // count may not be 100000
+        System.out.println("Synchronized Count is : " + counter.count);  // count will be 100000
     }
 }

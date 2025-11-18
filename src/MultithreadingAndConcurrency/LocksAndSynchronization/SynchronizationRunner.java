@@ -20,7 +20,7 @@ class BankAccountHandler {
     }
 
 
-    // all non static methods aquire object level lock
+    // all non static methods acquire object level lock
     // all non static methods of the same object use the same lock
     // if some thread is executing pay(), another thread cannot execute getBalance as they share the same lock.
     // another thread can execute getBankName() or bankCode() as it has different lock (class level lock)
@@ -37,7 +37,7 @@ class BankAccountHandler {
 
     void settleCreditCardBill(){
 
-        // come operation all threads can access
+        // some operation all threads can access
 
         synchronized (this){
             // this block puts a lock on this object

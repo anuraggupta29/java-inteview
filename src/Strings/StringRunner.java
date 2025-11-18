@@ -24,7 +24,7 @@ public class StringRunner {
 
         sb.append('a');
         sb.append("abc");
-        sb.append(1);  // append any object (calls their to string method) or primitive
+        sb.append(1);  // append any object (calls their tostring method) or primitive
         sb.append(new char[]{'p'});
 
         sb.delete(0,5);  // delete characters  0,1,2,3,4
@@ -34,7 +34,7 @@ public class StringRunner {
         sb.insert(2, "apple");
         sb.insert(2,7.2);  // insert works same ways as append and takes any object
 
-        String x = sb.substring(1,6);
+        String x = sb.substring(1,6);  // index 1,2,3,4,5
 
         // StringBuffer has same methods as StringBuilder
 

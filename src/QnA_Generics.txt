@@ -129,6 +129,11 @@ No. Due to type erasure, the compiler sees both methods as the same.
 public void print(List<String> list) {}
 public void print(List<Integer> list) {} // ❌ compile-time error
 
+Compile time: Compiler sees different signatures (List<String> vs List<Integer>).
+But before finalizing the .class file, the compiler applies erasure to generate JVM bytecode.
+The JVM does not allow two methods with the exact same erased signature in the same class.
+So the compiler rejects it early.
+
 
 
 Q. What is the difference between List<Object> and List<?>?   (******************IMPORTANT********************)

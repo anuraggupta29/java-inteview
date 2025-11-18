@@ -188,7 +188,6 @@ A. refer SealedAndFinalClass package
 sealed class cannot be extended by classes which are not permitted
 Eg. sealed class Vehicle permits Car,Bike,Boat {}
 
-sealed class cannot be extended by classes which are not permitted
 Extending classes must declare themselves as sealed, non-sealed or final.
 
 non-sealed classes can be extended by any class.
