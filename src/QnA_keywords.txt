@@ -6,9 +6,23 @@
 | `public`    | Accessible everywhere.                   | The most open visibility.                                                                                     |
 | `protected` | Accessible in same package + subclasses. | Common question: difference with default/package-private.                                                     |
 | `private`   | Accessible only in same class.           | Often asked about encapsulation.                                                                              |
-| *(default)* | No keyword → package-private.            | Not accessible outside package unless subclass (but default still won’t work in subclass if outside package). |
+| *(default)* | No keyword → package-private.            | Accessible in same package without subclass, Not accessible outside package even in subclass |
 
 
+🔹 Default Access Modifier (Package-Private)
+When you don’t specify any modifier, Java treats it as default access.
+Visibility
+Within same class → ✔️ allowed
+Within same package → ✔️ allowed
+Outside package → ❌ not allowed, even in subclasses
+
+🔹 Protected Access Modifier
+Used with fields, methods, constructors.
+Visibility
+Same class → ✔️ allowed
+Same package → ✔️ allowed
+Subclass in another package → ✔️ allowed (BUT only through inheritance)
+Non-subclass outside package → ❌ not allowed
 
 
 2. Class & Object Related
